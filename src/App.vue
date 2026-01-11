@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from "vue";
 
-// false = Mini mode (default), true = Expanded
 const isOpen = ref(false);
+const activeItem = ref("Dashboard"); // Track which page is "active"
+
 const toggleSidebar = () => (isOpen.value = !isOpen.value);
 
 const menuItems = [
@@ -28,9 +29,8 @@ const menuItems = [
       <span class="ml-4 text-xl font-bold">Admin Portal</span>
     </nav>
 
-    <!-- Middle Section -->
     <div class="flex flex-1 overflow-hidden">
-      <!-- 2. Sidebar (Mini-Mode logic) -->
+      <!-- 2. Sidebar -->
       <aside
         :class="[
           'bg-gray-50 border-r border-gray-200 overflow-y-auto transition-all duration-300 ease-in-out shrink-0',
@@ -42,14 +42,21 @@ const menuItems = [
             <li
               v-for="item in menuItems"
               :key="item.name"
-              class="flex items-center gap-4 rounded-lg p-3 hover:bg-blue-100 cursor-pointer overflow-hidden whitespace-nowrap group"
+              @click="activeItem = item.name"
+              :class="[
+                'flex items-center gap-4 rounded-lg p-3 cursor-pointer overflow-hidden whitespace-nowrap transition-all duration-200',
+                // Active Styles
+                activeItem === item.name
+                  ? 'bg-blue-600 text-white shadow-lg'
+                  : 'text-gray-600 hover:bg-blue-100 hover:text-blue-700',
+              ]"
             >
-              <!-- Icon: Always centered/visible -->
+              <!-- Icon -->
               <span class="text-xl shrink-0 w-8 text-center">{{
                 item.icon
               }}</span>
 
-              <!-- Text: Fades in/out based on state -->
+              <!-- Text -->
               <span
                 :class="[
                   'transition-opacity duration-300 font-medium',
@@ -63,40 +70,34 @@ const menuItems = [
         </div>
       </aside>
 
-      <!-- 3. Main Content: Only this area scrolls -->
+      <!-- 3. Main Content -->
       <main class="flex-1 overflow-y-auto bg-white p-8">
-        <div class="mx-auto max-w-7xl">
-          <h1 class="text-3xl font-extrabold text-gray-900">Dashboard</h1>
+        <div class="mx-auto max-w-5xl">
+          <h1 class="text-3xl font-extrabold text-gray-900">
+            {{ activeItem }}
+          </h1>
           <p class="text-gray-500 mt-2">
-            The sidebar is currently in
-            <b>{{ isOpen ? "Expanded" : "Mini" }}</b> mode.
+            Currently viewing the <strong>{{ activeItem }}</strong> section.
           </p>
 
-          <!-- Long Content to test scrolling -->
           <div class="mt-8 space-y-4">
             <div
-              v-for="i in 12"
+              v-for="i in 5"
               :key="i"
               class="h-32 rounded-xl border border-gray-200 bg-gray-50 p-6"
             >
-              <h3 class="font-bold">Content Block {{ i }}</h3>
-              <p class="text-sm text-gray-500 mt-1">
-                Scrollable area content...
-              </p>
+              <h3 class="font-bold">Data for {{ activeItem }} #{{ i }}</h3>
             </div>
           </div>
         </div>
       </main>
     </div>
 
-    <!-- 4. Footer: Locked at bottom -->
+    <!-- 4. Footer -->
     <footer
       class="flex h-12 shrink-0 items-center justify-center border-t border-gray-200 bg-white text-sm text-gray-500 px-4"
     >
-      <div class="flex w-full justify-between max-w-5xl">
-        <span>© 2025 Dashboard Pro</span>
-        <span class="hidden sm:inline">v4.0.1 Stable</span>
-      </div>
+      <span>© 2025 Dashboard Pro</span>
     </footer>
   </div>
 </template>
